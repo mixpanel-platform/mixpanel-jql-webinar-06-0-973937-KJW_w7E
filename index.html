@@ -119,21 +119,19 @@ button
         </div>
 
         <div class="four columns dataBars">
-        <button class="button-secondary dataTarget" id="SIGNUPS"><h2>XX</h2><br/>Signups Today
-        <div id="barTwo" class="filledBar"></div>
-        </button>
-        </div>
-
-        </div>
-
-        <div class="four columns dataBars">
         <button class="button-secondary dataTarget" id="CONV"><h2>XX</h2><br/>Daily Purchase Conversion
-        <div id="barThree" class="filledBar"></div>
+        <div id="barTwo" class="filledBar"></div>
         </button>
         
         </div>
 
+        <div class="four columns dataBars">
+        <button class="button-secondary dataTarget" id="SIGNUPS"><h2>XX</h2><br/>Signups Today
+        <div id="barThree" class="filledBar"></div>
+        </button>
+        </div>
 
+        </div>
 
         <div class="row" id="emptySpace" style="height:30px;">
         </div>
@@ -183,38 +181,6 @@ function query1() {
 }
 
 function query2() {
-
-MP.api.jql(function main() {
-  return Events({
-    from_date: "2016-06-01",
-    to_date: "2016-06-04"
-  })
-  //get just Sign Up events
-  .filter(function(event){
-    return event.name === "Sign Up"
-  })
-  
-  //get the number of signups per user
-  .groupByUser(function(count, events) {
-                count = count || 0;
-                return count + events.length;
-            })
-  
-  //count unique sign ups
-  .reduce(mixpanel.reducer.count())
-}).done(function(results){
-  console.log("sign up query: " + results)
-
-  //update the view
-  var signup = results;
-  $('#barTwo').css("height", signup/2000*100+"%");
-  $('#SIGNUPS h2').text(signup)
-
-});
-
-}
-
-function query3() {
 
 
 MP.api.jql(function main() {
@@ -267,13 +233,45 @@ MP.api.jql(function main() {
     //update the view
     var reformat = results[0]
     var conv = Math.floor(reformat[1]/reformat[0]*100)
-    $('#barThree').css("height", conv+"%");
+    $('#barTwo').css("height", conv+"%");
     $('#CONV h2').text(conv +"%")
   
 
   });
 }
 
+
+function query3() {
+
+MP.api.jql(function main() {
+  return Events({
+    from_date: "2016-06-01",
+    to_date: "2016-06-04"
+  })
+  //get just Sign Up events
+  .filter(function(event){
+    return event.name === "Sign Up"
+  })
+  
+  //get the number of signups per user
+  .groupByUser(function(count, events) {
+                count = count || 0;
+                return count + events.length;
+            })
+  
+  //count unique sign ups
+  .reduce(mixpanel.reducer.count())
+}).done(function(results){
+  console.log("sign up query: " + results)
+
+  //update the view
+  var signup = results;
+  $('#barThree').css("height", signup/2000*100+"%");
+  $('#SIGNUPS h2').text(signup)
+
+});
+
+}
 
 </script>
         
