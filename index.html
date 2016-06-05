@@ -173,7 +173,7 @@ function query1() {
 
        //update our view with results
        var dau = results.toString()
-       $('#barOne').css("height", (dau/5000)*100+"%");
+       $('#barOne').css("height", (dau/3000)*100+"%");
         $('#DAU h2').text(dau)
   
        //return results;
@@ -266,7 +266,7 @@ MP.api.jql(function main() {
 
   //update the view
   var signup = results;
-  $('#barThree').css("height", signup/3000*100+"%");
+  $('#barThree').css("height", signup/2000*100+"%");
   $('#SIGNUPS h2').text(signup)
 
 });
