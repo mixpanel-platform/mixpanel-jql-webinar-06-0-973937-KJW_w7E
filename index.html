@@ -119,7 +119,7 @@ button
         </div>
 
         <div class="four columns dataBars">
-        <button class="button-secondary dataTarget" id="CONV"><h2>XX</h2><br/>Daily Share Conversion
+        <button class="button-secondary dataTarget" id="CONV"><h2>XX</h2><br/>Daily Purchase Conversion
         <div id="barTwo" class="filledBar"></div>
         </button>
         
@@ -173,7 +173,7 @@ function query1() {
 
        //update our view with results
        var dau = results.toString()
-       $('#barOne').css("height", (dau/10000)*100+"%");
+       $('#barOne').css("height", (dau/5000)*100+"%");
         $('#DAU h2').text(dau)
   
        //return results;
@@ -184,7 +184,7 @@ function query2() {
 
 
 MP.api.jql(function main() {
-  var funnel = params.funnel || ["Like", "Re-share"];
+  var funnel = params.funnel || ["App Open", "In-app Purchase"];
   return Events({
     from_date: "2016-06-01",
     to_date: "2016-06-03"
@@ -266,7 +266,7 @@ MP.api.jql(function main() {
 
   //update the view
   var signup = results;
-  $('#barThree').css("height", signup/6000*100+"%");
+  $('#barThree').css("height", signup/3000*100+"%");
   $('#SIGNUPS h2').text(signup)
 
 });
