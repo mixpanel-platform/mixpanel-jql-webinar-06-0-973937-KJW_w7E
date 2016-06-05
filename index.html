@@ -1,15 +1,303 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="https://cdn.mxpnl.com/libs/mixpanel-platform/css/reset.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.css">
-    <script src="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.js"></script>
-  </head>
-  <body class="mixpanel-platform-body">
-    <h1>Hello, World!</h1>
-    <script>
-      // Run queries and display results here
-    </script>
-  </body>
-</html>
+
+<html lang="en">
+<!-- Basic Needs -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+
+  
+  <title>AK's Dashboard</title>
+  <meta name="description" content="">
+  <meta name="author" content="AK">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="./favicon.ico">
+
+ <!-- CSS -->
+  <link rel="stylesheet" href="./css/font.css" type="text/css">
+  <link rel="stylesheet" href="./css/normalize.css" type="text/css">
+  <link rel="stylesheet" href="./css/skeleton.css" type="text/css">
+<style type="text/css">
+#mainContent
+{
+  margin-left: 60px;
+}
+h4
+{
+  padding-top: 10px;
+}
+ .dataTarget
+ {
+  height: 600px;
+ } 
+
+.dataBars
+{
+  /*margin: 0 auto 0 auto;*/
+  position: relative;
+}
+
+.container
+{
+  text-align: center;
+}
+
+.filledBar
+{
+  width: 100%;
+  height: 100px;
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  display: inline;
+  padding-top: 10px;
+  z-index: -1; 
+}
+
+button
+{
+  z-index: 10;
+  width: 240px;
+  padding-left: 0px;
+  padding-right: 0px;
+  position: relative;
+}
+
+/* change padding-top to move bars */
+
+#barOne
+{
+
+  background-color: #4fa1ee;
+  transition: height 1.5s;
+
+}
+
+#barTwo
+{
+ background-color: #26bbbe; 
+ margin-left: 0px;
+ transition: height 2s;
+
+}
+
+#barThree
+{
+  background-color: #a28acd;
+ /* margin-left: 106px;
+  width: 64%;*/
+  transition: height 2.5s;
+
+}
+
+</style>
+<!-- JS -->
+<script src="./js/jquery.min.js"></script>
+<script src="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.js"></script>
+</head>
+
+
+<!-- Content -->
+
+<body>
+  
+    <div class="container u-full-width">
+      <div class="row">
+        <div class="twelve columns">
+          <h4 class="hero-heading">A Mixpanel Dashboard Example</h4>
+          </div>
+        </div>
+
+        <div class="row" id="mainContent">
+        <div class="four columns dataBars">
+        <button class="button-secondary dataTarget" id="DAU"><h2>XX</h2><br/>Daily Active Users
+        <div id="barOne" class="filledBar"></div>
+        </button>
+         
+
+
+        </div>
+
+        <div class="four columns dataBars">
+        <button class="button-secondary dataTarget" id="CONV"><h2>XX</h2><br/>Weekly Recommendation Rate
+        <div id="barTwo" class="filledBar"></div>
+        </button>
+        
+        </div>
+
+        <div class="four columns dataBars">
+        <button class="button-secondary dataTarget" id="SIGNUPS"><h2>XX</h2><br/>Signups This Week
+        <div id="barThree" class="filledBar"></div>
+        </button>
+        </div>
+
+        </div>
+
+        <div class="row" id="emptySpace" style="height:30px;">
+        </div>
+  
+          <a id="dataRefresh" class="button button-primary">Press me!</a>
+          
+      
+    </div>
+
+<!-- make the queries -->
+<script language="javascript">
+function query1() {
+    MP.api.jql(function main() {
+        return Events({
+                from_date: '2016-06-01',
+                to_date: '2016-06-02'
+            })
+            
+            //find 'active events'
+            .filter(function(event) {
+                return event.name === "Thumbs Up" || event.name ===
+                    "Thumbs Down" || event.name ===
+                    "Follow Sandwich"
+            })
+            
+            //solve for 'unique users'
+            .groupByUser(function(count, events) {
+                count = count || 0;
+                return count + events.length;
+            })
+            
+            //sum the count of uniques across all events 
+            .reduce(mixpanel.reducer.count())
+            
+            // summerize event names
+            //.groupBy(['name'], mixpanel.reducer.count())
+    }).done(function(results) {
+       console.log('DAU query: '+results);
+
+       //update our view with results
+       var dau = results.toString()
+       $('#barOne').css("height", (dau/10000)*100+"%");
+        $('#DAU h2').text(dau)
+  
+       //return results;
+    });
+}
+
+function query2() {
+
+
+MP.api.jql(function main() {
+  var funnel = params.funnel || ["Purchase Sandwich", "Recommend a Sandwich"];
+  return Events({
+    from_date: "2016-06-01",
+    to_date: "2016-06-03"
+  })
+  // get the number of steps completed by each user
+  .groupByUser(function(steps_completed, events) {
+    if (steps_completed === undefined) { steps_completed = 0; }
+    _.each(events, function(e) {
+      if (e.name === funnel[steps_completed]) {
+        steps_completed++;
+      }
+    });
+    return steps_completed;
+  })
+  // filter out users who did not enter the funnel
+  .filter(function(item) { return item.value > -1 })
+  
+  // Add counts for step N to counts for previous steps.
+  // This converts us from "users who ended at each step"
+  // into "users who were ever present at each step".
+  .reduce(function(accumulators, users_with_final_steps) {
+    var funnel_steps = Array(funnel.length);
+    for (var i = 0; i < funnel_steps.length; i++) {
+      funnel_steps[i] = 0;
+    }
+    _.each(users_with_final_steps, function(user) {
+      // for each user, count them once per step
+      // until the step they ended on
+      for (var i = 0; i < user.value; i++) {
+        funnel_steps[i]++;
+      }
+    });
+    // handle previous funnel step counts, if
+    // there have been multiple invocations of this function
+    _.each(accumulators, function(accumulator) {
+      _.each(accumulator, function(step_count, i) {
+        funnel_steps[i] += step_count;
+      });
+    });
+
+    return funnel_steps;
+  });
+}).done(function(results){
+    console.log("funnel query: " + results)
+    
+    //update the view
+    var reformat = results[0]
+    var conv = Math.floor(reformat[1]/reformat[0]*100)
+    $('#barTwo').css("height", conv+"%");
+    $('#CONV h2').text(conv +"%")
+  
+
+  });
+}
+
+
+function query3() {
+
+MP.api.jql(function main() {
+  return Events({
+    from_date: "2016-06-01",
+    to_date: "2016-06-04"
+  })
+  //get just Sign Up events
+  .filter(function(event){
+    return event.name === "Sign Up"
+  })
+  
+  //get the number of signups per user
+  .groupByUser(function(count, events) {
+                count = count || 0;
+                return count + events.length;
+            })
+  
+  //count unique sign ups
+  .reduce(mixpanel.reducer.count())
+}).done(function(results){
+  console.log("sign up query: " + results)
+
+  //update the view
+  var signup = results;
+  $('#barThree').css("height", signup/6000*100+"%");
+  $('#SIGNUPS h2').text(signup)
+
+});
+
+}
+
+</script>
+        
+<!-- update the bar chart -->
+<script>
+$(document).on("ready", function(){
+  console.log("doc loaded");
+
+
+
+
+
+$('#dataRefresh').on('click', function() { 
+// run querys here:
+  query1();
+  query2();
+  query3();
+
+  console.log('data updated!')
+  
+});
+
+
+});
+
+
+</script>      
+
+</body></html>
