@@ -146,8 +146,8 @@ button
 function query1() {
     MP.api.jql(function main() {
         return Events({
-                from_date: '2016-06-01',
-                to_date: '2016-06-02'
+                from_date: '2016-06-03',
+                to_date: '2016-06-03'
             })
             
             //find 'active events'
@@ -173,7 +173,7 @@ function query1() {
 
        //update our view with results
        var dau = results.toString()
-       $('#barOne').css("height", (dau/3000)*100+"%");
+       $('#barOne').css("height", (dau/1000)*100+"%");
         $('#DAU h2').text(dau)
   
        //return results;
@@ -186,7 +186,7 @@ function query2() {
 MP.api.jql(function main() {
   var funnel = params.funnel || ["App Open", "In-app Purchase"];
   return Events({
-    from_date: "2016-06-01",
+    from_date: "2016-06-03",
     to_date: "2016-06-03"
   })
   // get the number of steps completed by each user
@@ -245,8 +245,8 @@ function query3() {
 
 MP.api.jql(function main() {
   return Events({
-    from_date: "2016-06-01",
-    to_date: "2016-06-04"
+    from_date: "2016-06-03",
+    to_date: "2016-06-03"
   })
   //get just Sign Up events
   .filter(function(event){
@@ -266,7 +266,7 @@ MP.api.jql(function main() {
 
   //update the view
   var signup = results;
-  $('#barThree').css("height", signup/2000*100+"%");
+  $('#barThree').css("height", signup/500*100+"%");
   $('#SIGNUPS h2').text(signup)
 
 });
