@@ -119,14 +119,14 @@ button
         </div>
 
         <div class="four columns dataBars">
-        <button class="button-secondary dataTarget" id="CONV"><h2>XX</h2><br/>Weekly Recommendation Rate
+        <button class="button-secondary dataTarget" id="CONV"><h2>XX</h2><br/>Daily Share Conversion
         <div id="barTwo" class="filledBar"></div>
         </button>
         
         </div>
 
         <div class="four columns dataBars">
-        <button class="button-secondary dataTarget" id="SIGNUPS"><h2>XX</h2><br/>Signups This Week
+        <button class="button-secondary dataTarget" id="SIGNUPS"><h2>XX</h2><br/>Signups Today
         <div id="barThree" class="filledBar"></div>
         </button>
         </div>
@@ -152,9 +152,9 @@ function query1() {
             
             //find 'active events'
             .filter(function(event) {
-                return event.name === "Thumbs Up" || event.name ===
-                    "Thumbs Down" || event.name ===
-                    "Follow Sandwich"
+                return event.name === "Post" || event.name ===
+                    "Like" || event.name ===
+                    "Comment"
             })
             
             //solve for 'unique users'
@@ -184,7 +184,7 @@ function query2() {
 
 
 MP.api.jql(function main() {
-  var funnel = params.funnel || ["Purchase Sandwich", "Recommend a Sandwich"];
+  var funnel = params.funnel || ["Like", "Re-share"];
   return Events({
     from_date: "2016-06-01",
     to_date: "2016-06-03"
